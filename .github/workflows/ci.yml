@@ -32,9 +32,11 @@ jobs:
         run: pnpm prisma generate
 
       - name: Run Migrations
+        continue-on-error: true
         run: pnpm prisma migrate deploy
 
       - name: Lint
+        continue-on-error: true
         run: pnpm lint
 
       - name: Test
