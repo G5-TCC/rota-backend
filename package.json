@@ -114,7 +114,7 @@
       "unrs-resolver"
     ]
   },
-  "jest": {
+"jest": {
     "moduleFileExtensions": [
       "js",
       "json",
@@ -129,10 +129,6 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node",
-    "moduleNameMapper": {
-      "^@prisma/client$": "<rootDir>/../node_modules/@prisma/client",
-      "^.prisma/client/(.*)$": "<rootDir>/../node_modules/.prisma/client/$1"
-    }
+    "testEnvironment": "node"
   }
 }
