@@ -6,6 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "postinstall": "prisma generate",
     "build": "rm -rf dist && prisma generate && prisma db push && nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "node dist/src/main.js",
@@ -101,9 +102,16 @@
   },
   "pnpm": {
     "onlyBuiltDependencies": [
-      "prisma",
+      "@nestjs/core",
       "@prisma/engines",
-      "@nestjs/core"
+      "@scarf/scarf",
+      "@sentry-internal/node-cpu-profiler",
+      "cpu-features",
+      "msgpackr-extract",
+      "prisma",
+      "protobufjs",
+      "ssh2",
+      "unrs-resolver"
     ]
   },
   "jest": {
@@ -121,6 +129,10 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "moduleNameMapper": {
+      "^@prisma/client$": "<rootDir>/../node_modules/@prisma/client",
+      "^.prisma/client/(.*)$": "<rootDir>/../node_modules/.prisma/client/$1"
+    }
   }
 }
