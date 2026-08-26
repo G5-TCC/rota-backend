@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { AuthResponse } from '../dtos/auth-response.dto';
+import { AuthResponse, AuthUserResponse } from '../dtos/auth-response.dto';
 import { AuthenticatedUser } from '../interfaces/authenticated-user.interface';
 import { UserMapper } from '../../users/mappers/user.mapper';
 
