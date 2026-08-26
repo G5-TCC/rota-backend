@@ -16,4 +16,8 @@ export class AuthMapper {
       user: this.userMapper.toResponse(user),
     };
   }
+
+  toUserResponse(user: any): AuthUserResponse {
+    return this.userMapper.toResponse(user);
+  }
 }

@@ -64,7 +64,11 @@ export class AuthFacade {
       throw new UnauthorizedException('Token ausente');
     }
     const response = await this.sessionService.refresh(token, userAgent);
-    return { ...response, message: 'Token refreshed successfully' };
+    return {
+      ...response,
+      user: this.authMapper.toUserResponse(response.user),
+      message: 'Token refreshed successfully',
+    };
   }
 
   async logout(token: string) {

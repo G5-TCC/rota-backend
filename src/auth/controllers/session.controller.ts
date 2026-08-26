@@ -7,7 +7,7 @@ import {
   Request as NestRequest,
   UseInterceptors,
 } from '@nestjs/common';
-import { Request } from 'express';
+import type { Request } from 'express';
 import { AuthGuard } from '@nestjs/passport';
 import { SessionService } from '../services/session.service';
 import {

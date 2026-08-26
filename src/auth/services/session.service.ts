@@ -68,6 +68,7 @@ export class SessionService {
       }),
       refreshToken: newRefreshToken,
       expiresAt,
+      user: session!.user,
     };
   }
 

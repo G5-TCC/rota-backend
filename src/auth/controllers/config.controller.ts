@@ -7,7 +7,7 @@ import {
   Delete,
   UseInterceptors,
 } from '@nestjs/common';
-import { Request } from 'express';
+import type { Request } from 'express';
 import { AuthGuard } from '@nestjs/passport';
 import { SecurityFacade } from '../services/security.facade';
 import {
