@@ -5,7 +5,13 @@ import { PrismaService } from '../../prisma/prisma.service';
 export class SessionRepository {
   constructor(private prisma: PrismaService) {}
 
-  async create(data: { userId: string; refreshToken: string; ipAddress: string; userAgent: string; expiresAt: Date }) {
+  async create(data: {
+    userId: string;
+    refreshToken: string;
+    ipAddress: string;
+    userAgent: string;
+    expiresAt: Date;
+  }) {
     return this.prisma.session.create({ data });
   }
 
@@ -30,7 +36,13 @@ export class SessionRepository {
   async findByUserId(userId: string) {
     return this.prisma.session.findMany({
       where: { userId },
-      select: { id: true, userAgent: true, ipAddress: true, createdAt: true, updatedAt: true },
+      select: {
+        id: true,
+        userAgent: true,
+        ipAddress: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     });
   }
 

@@ -3,7 +3,11 @@ import { UserService } from './users.service';
 import { UserRepository } from '../repositories/user.repository';
 import { MailService } from '../../mail/services/mail.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { ConflictException, BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { RegisterDto } from '../../auth/dtos/auth.dto';
 
 describe('UserService', () => {
@@ -58,7 +62,9 @@ describe('UserService', () => {
     });
 
     it('should throw BadRequestException if email is invalid', async () => {
-      await expect(service.findByEmail('invalid')).rejects.toThrow(BadRequestException);
+      await expect(service.findByEmail('invalid')).rejects.toThrow(
+        BadRequestException,
+      );
     });
   });
 
@@ -71,7 +77,11 @@ describe('UserService', () => {
 
     it('should create a user successfully', async () => {
       repository.findFirstByEmailOrAlias.mockResolvedValue(null);
-      repository.create.mockResolvedValue({ id: '1', ...registrationData, role: 'USER' } as any);
+      repository.create.mockResolvedValue({
+        id: '1',
+        ...registrationData,
+        role: 'USER',
+      } as any);
 
       const result = await service.create(registrationData, 'hashedPassword');
 
@@ -80,10 +90,13 @@ describe('UserService', () => {
     });
 
     it('should throw ConflictException if email already exists', async () => {
-      repository.findFirstByEmailOrAlias.mockResolvedValue({ email: registrationData.email } as any);
+      repository.findFirstByEmailOrAlias.mockResolvedValue({
+        email: registrationData.email,
+      } as any);
 
-      await expect(service.create(registrationData, 'hashedPassword'))
-        .rejects.toThrow(ConflictException);
+      await expect(
+        service.create(registrationData, 'hashedPassword'),
+      ).rejects.toThrow(ConflictException);
     });
   });
 
@@ -91,7 +104,7 @@ describe('UserService', () => {
     it('should return user by id', async () => {
       const mockUser = { id: '1', email: 'a@a.com' };
       repository.findById.mockResolvedValue(mockUser as any);
-      
+
       const result = await service.findOne('1');
       expect(result).toEqual(mockUser);
     });
@@ -108,7 +121,9 @@ describe('UserService', () => {
 
     it('should throw NotFoundException for invalid token', async () => {
       repository.findByToken.mockResolvedValue(null);
-      await expect(service.verifyEmail('invalid')).rejects.toThrow(NotFoundException);
+      await expect(service.verifyEmail('invalid')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 });

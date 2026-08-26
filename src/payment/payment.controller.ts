@@ -1,4 +1,13 @@
-import { Controller, Post, Body, Headers, UseGuards, Req, Param, BadRequestException } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Headers,
+  UseGuards,
+  Req,
+  Param,
+  BadRequestException,
+} from '@nestjs/common';
 import type { RawBodyRequest } from '@nestjs/common';
 import { Request } from 'express';
 import { PaymentService } from './payment.service';
@@ -17,13 +26,15 @@ export class PaymentController {
   @UseGuards(JwtAuthGuard)
   @Post('checkout')
   async createCheckout(
-    @CurrentUser('sub') userId: string, 
-    @Body() dto: CreateCheckoutDto
+    @CurrentUser('sub') userId: string,
+    @Body() dto: CreateCheckoutDto,
   ) {
     return this.paymentService.createCheckout(userId, dto);
   }
 
-  @ApiOperation({ summary: 'Simula o pagamento de um checkout (apenas em modo sandbox/dev)' })
+  @ApiOperation({
+    summary: 'Simula o pagamento de um checkout (apenas em modo sandbox/dev)',
+  })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Post('simulate/:id')
@@ -31,16 +42,20 @@ export class PaymentController {
     return this.paymentService.simulatePayment(id);
   }
 
-  @ApiOperation({ summary: 'Webhook para recebimento de notificações do AbacatePay' })
+  @ApiOperation({
+    summary: 'Webhook para recebimento de notificações do AbacatePay',
+  })
   @Post('webhook')
   async handleWebhook(
     @Headers('x-abacatepay-signature') signature: string,
     @Req() req: RawBodyRequest<Request>,
   ) {
     if (!req.rawBody) {
-      throw new BadRequestException('Raw body not found. Ensure rawBody is enabled in NestJS bootstrap.');
+      throw new BadRequestException(
+        'Raw body not found. Ensure rawBody is enabled in NestJS bootstrap.',
+      );
     }
-    
+
     return this.paymentService.handleWebhook(signature, req.rawBody.toString());
   }
 }

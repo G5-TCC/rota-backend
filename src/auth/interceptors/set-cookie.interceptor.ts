@@ -8,13 +8,20 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Response } from 'express';
 
+interface AuthData {
+  clearCookie?: boolean;
+  refreshToken?: string;
+  expiresAt?: Date;
+  [key: string]: any;
+}
+
 @Injectable()
 export class SetCookieInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const res = context.switchToHttp().getResponse<Response>();
 
     return next.handle().pipe(
-      map((data) => {
+      map((data: AuthData) => {
         if (data && data.clearCookie) {
           res.clearCookie('refreshToken');
           delete data.clearCookie;

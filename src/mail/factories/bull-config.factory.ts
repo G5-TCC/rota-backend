@@ -30,7 +30,7 @@ function getHostConnectionOptions(config: ConfigService): ConnectionOptions {
   const host = config.get<string>('REDIS_HOST', 'localhost');
   const port = config.get<number>('REDIS_PORT', 6379);
   const password = config.get<string>('REDIS_PASSWORD');
-  
+
   const options: ConnectionOptions = {
     host,
     port,

@@ -1,4 +1,9 @@
-import { Injectable, Logger, BadRequestException, Inject } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  BadRequestException,
+  Inject,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateCheckoutDto } from './dtos/create-checkout.dto';
@@ -27,9 +32,13 @@ export class PaymentService {
     if (!user) throw new BadRequestException('Usuário não encontrado');
 
     const { amount, productName, externalId } = this.calculator.calculate(dto);
-    
-    const product = await this.gateway.createProduct(externalId, productName, amount);
-    
+
+    const product = await this.gateway.createProduct(
+      externalId,
+      productName,
+      amount,
+    );
+
     const isSubscription = dto.type === TransactionType.PLAN_SUBSCRIPTION;
     const items = [{ id: product.id, quantity: 1 }];
     const customer = {
@@ -38,11 +47,14 @@ export class PaymentService {
       ...(dto.taxId ? { taxId: dto.taxId } : {}),
     };
     const urls = {
-      returnUrl: dto.returnUrl || this.configService.get<string>('APP_RETURN_URL'),
-      completionUrl: dto.completionUrl || this.configService.get<string>('APP_COMPLETION_URL'),
+      returnUrl:
+        dto.returnUrl || this.configService.get<string>('APP_RETURN_URL'),
+      completionUrl:
+        dto.completionUrl ||
+        this.configService.get<string>('APP_COMPLETION_URL'),
     };
 
-    const checkoutData = isSubscription 
+    const checkoutData = isSubscription
       ? await this.gateway.createSubscription(items, customer, urls)
       : await this.gateway.createCheckout(items, customer, urls);
 
@@ -65,8 +77,13 @@ export class PaymentService {
       await this.gateway.simulatePayment(externalId);
       return { message: 'Simulação enviada com sucesso' };
     } catch (error) {
-      this.logger.error('Erro ao simular pagamento', error.response?.data || error.message);
-      throw new BadRequestException('Falha na simulação. Verifique se o ID existe e se você está em modo sandbox.');
+      this.logger.error(
+        'Erro ao simular pagamento',
+        error.response?.data || error.message,
+      );
+      throw new BadRequestException(
+        'Falha na simulação. Verifique se o ID existe e se você está em modo sandbox.',
+      );
     }
   }
 

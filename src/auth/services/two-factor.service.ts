@@ -13,25 +13,32 @@ export class TwoFactorService {
     private readonly deviceMonitor: DeviceMonitorService,
   ) {}
 
-  async generateAndSendCode(user: { id: string; email: string }, strategyName = 'email'): Promise<void> {
+  async generateAndSendCode(
+    user: { id: string; email: string },
+    strategyName = 'email',
+  ): Promise<void> {
     const strategy = this.strategyRegistry.getStrategy(strategyName);
     const code = await strategy.generateCode(user.id);
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
 
     await this.userRepository.update2faCode(user.id, code, expiresAt);
     await strategy.sendCode(user.email, code);
-    
+
     this.logger.log(`2FA code sent via ${strategyName} to ${user.email}`);
   }
 
   async verifyCode(
-    user: { id: string; twoFactorCode: string | null; twoFactorExpiresAt: Date | null }, 
+    user: {
+      id: string;
+      twoFactorCode: string | null;
+      twoFactorExpiresAt: Date | null;
+    },
     code: string,
-    strategyName = 'email'
+    strategyName = 'email',
   ): Promise<boolean> {
     if (!user.twoFactorCode || !user.twoFactorExpiresAt) return false;
     if (user.twoFactorExpiresAt < new Date()) return false;
-    
+
     const strategy = this.strategyRegistry.getStrategy(strategyName);
     return strategy.verifyCode(code, user.twoFactorCode);
   }

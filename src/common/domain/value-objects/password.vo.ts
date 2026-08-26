@@ -10,7 +10,9 @@ export class Password {
 
   private validate(password: string): void {
     if (password.length < 8) {
-      throw new BadRequestException('Password must be at least 8 characters long');
+      throw new BadRequestException(
+        'Password must be at least 8 characters long',
+      );
     }
   }
 

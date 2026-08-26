@@ -1,10 +1,19 @@
-import { Injectable, Logger, BadRequestException, ServiceUnavailableException } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  BadRequestException,
+  ServiceUnavailableException,
+} from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import { firstValueFrom } from 'rxjs';
 import * as crypto from 'crypto';
 import CircuitBreaker = require('opossum');
-import { IPaymentGateway, PaymentProduct, CheckoutResult } from '../interfaces/payment-gateway.interface';
+import {
+  IPaymentGateway,
+  PaymentProduct,
+  CheckoutResult,
+} from '../interfaces/payment-gateway.interface';
 
 @Injectable()
 export class AbacatePayGateway implements IPaymentGateway {
@@ -23,11 +32,14 @@ export class AbacatePayGateway implements IPaymentGateway {
     };
     this.breaker = new CircuitBreaker(this.executeRequest.bind(this), {
       ...options,
-      errorFilter: (error) => error.response?.data?.error?.includes('already exists')
+      errorFilter: (error) =>
+        error.response?.data?.error?.includes('already exists'),
     });
     this.breaker.fallback(() => {
       this.logger.error('Circuit Breaker: AbacatePay service is unavailable');
-      throw new ServiceUnavailableException('Payment gateway is currently unavailable');
+      throw new ServiceUnavailableException(
+        'Payment gateway is currently unavailable',
+      );
     });
   }
 
@@ -42,7 +54,11 @@ export class AbacatePayGateway implements IPaymentGateway {
     };
   }
 
-  async createProduct(externalId: string, name: string, price: number): Promise<PaymentProduct> {
+  async createProduct(
+    externalId: string,
+    name: string,
+    price: number,
+  ): Promise<PaymentProduct> {
     try {
       const response = await this.breaker.fire({
         url: `${this.baseUrl}/products/create`,
@@ -53,40 +69,66 @@ export class AbacatePayGateway implements IPaymentGateway {
       return response.data.data;
     } catch (error) {
       if (error.response?.data?.error?.includes('already exists')) {
-        return this.findProductByExternalId(externalId) as Promise<PaymentProduct>;
+        return this.findProductByExternalId(
+          externalId,
+        ) as Promise<PaymentProduct>;
       }
       throw error;
     }
   }
 
-  async findProductByExternalId(externalId: string): Promise<PaymentProduct | null> {
+  async findProductByExternalId(
+    externalId: string,
+  ): Promise<PaymentProduct | null> {
     try {
       const response = await this.breaker.fire({
         url: `${this.baseUrl}/products/list`,
         method: 'GET',
         headers: this.headers,
       });
-      return response.data.data.find((p: any) => p.externalId === externalId) || null;
+      return (
+        response.data.data.find((p: any) => p.externalId === externalId) || null
+      );
     } catch {
       return null;
     }
   }
 
-  async createSubscription(items: any[], customer: any, urls: any): Promise<CheckoutResult> {
+  async createSubscription(
+    items: any[],
+    customer: any,
+    urls: any,
+  ): Promise<CheckoutResult> {
     const response = await this.breaker.fire({
       url: `${this.baseUrl}/subscriptions/create`,
       method: 'POST',
-      data: { items, customer, ...urls, frequency: 'SUBSCRIPTION', methods: ['CARD'] },
+      data: {
+        items,
+        customer,
+        ...urls,
+        frequency: 'SUBSCRIPTION',
+        methods: ['CARD'],
+      },
       headers: this.headers,
     });
     return response.data.data;
   }
 
-  async createCheckout(items: any[], customer: any, urls: any): Promise<CheckoutResult> {
+  async createCheckout(
+    items: any[],
+    customer: any,
+    urls: any,
+  ): Promise<CheckoutResult> {
     const response = await this.breaker.fire({
       url: `${this.baseUrl}/checkouts/create`,
       method: 'POST',
-      data: { items, customer, ...urls, frequency: 'ONE_TIME', methods: ['CARD'] },
+      data: {
+        items,
+        customer,
+        ...urls,
+        frequency: 'ONE_TIME',
+        methods: ['CARD'],
+      },
       headers: this.headers,
     });
     return response.data.data;
@@ -100,7 +142,10 @@ export class AbacatePayGateway implements IPaymentGateway {
     const digest = hmac.update(rawBody).digest('hex');
 
     try {
-      return crypto.timingSafeEqual(Buffer.from(digest), Buffer.from(signature));
+      return crypto.timingSafeEqual(
+        Buffer.from(digest),
+        Buffer.from(signature),
+      );
     } catch {
       return false;
     }

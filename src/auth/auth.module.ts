@@ -43,15 +43,18 @@ import { VerifyTwoFactorUseCase } from './use-cases/verify-2fa.use-case';
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '15m' },
     }),
-    ThrottlerModule.forRoot([{
-      name: 'short',
-      ttl: 1000,
-      limit: 3,
-    }, {
-      name: 'long',
-      ttl: 60000,
-      limit: 100,
-    }]),
+    ThrottlerModule.forRoot([
+      {
+        name: 'short',
+        ttl: 1000,
+        limit: 3,
+      },
+      {
+        name: 'long',
+        ttl: 60000,
+        limit: 100,
+      },
+    ]),
   ],
   controllers: [
     AuthController,
@@ -93,7 +96,7 @@ import { VerifyTwoFactorUseCase } from './use-cases/verify-2fa.use-case';
     SecurityFacade,
     AuthMapper,
     JwtAuthGuard,
-    TwoFactorService
+    TwoFactorService,
   ],
 })
 export class AuthModule {}

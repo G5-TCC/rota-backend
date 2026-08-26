@@ -10,9 +10,9 @@ import {
 import { SecurityFacade } from '../services/security.facade';
 import { AccountFacade } from '../services/account.facade';
 import { VerifyEmailDto } from '../dtos/auth.dto';
-import { 
-  ApiTags, 
-  ApiOperation, 
+import {
+  ApiTags,
+  ApiOperation,
   ApiBearerAuth,
   ApiOkResponse,
   ApiUnauthorizedResponse,
@@ -33,12 +33,15 @@ export class SecurityController {
   ) {}
 
   @Post('verify-email')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Verificar e-mail do usuário',
-    description: 'Ativa a conta do usuário através do token enviado via link no e-mail.'
+    description:
+      'Ativa a conta do usuário através do token enviado via link no e-mail.',
   })
   @ApiOkResponse({ description: 'E-mail verificado com sucesso.' })
-  @ApiBadRequestResponse({ description: 'Token de verificação inválido ou expirado.' })
+  @ApiBadRequestResponse({
+    description: 'Token de verificação inválido ou expirado.',
+  })
   async verifyEmail(@Body() verifyEmailDto: VerifyEmailDto) {
     return this.accountFacade.verifyEmail(verifyEmailDto.token);
   }

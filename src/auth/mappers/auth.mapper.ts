@@ -7,7 +7,10 @@ import { UserMapper } from '../../users/mappers/user.mapper';
 export class AuthMapper {
   constructor(private readonly userMapper: UserMapper) {}
 
-  toAuthResponse(user: AuthenticatedUser, session: { accessToken: string }): AuthResponse {
+  toAuthResponse(
+    user: AuthenticatedUser,
+    session: { accessToken: string },
+  ): AuthResponse {
     return {
       accessToken: session.accessToken,
       user: this.userMapper.toResponse(user),

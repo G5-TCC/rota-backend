@@ -27,9 +27,9 @@ describe('MailService', () => {
   it('should add welcome email to queue', async () => {
     const email = 'test@example.com';
     const alias = 'testuser';
-    
+
     await service.sendWelcomeEmail(email, alias);
-    
+
     expect(queue.add).toHaveBeenCalledWith(
       'welcome',
       {

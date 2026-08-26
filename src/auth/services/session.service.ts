@@ -19,38 +19,55 @@ export class SessionService {
     private jwtService: JwtService,
   ) {}
 
-  async create(userId: string, ipAddress: string, userAgent: string, rememberMe: boolean, role: string, isVerified: boolean) {
+  async create(
+    userId: string,
+    ipAddress: string,
+    userAgent: string,
+    rememberMe: boolean,
+    role: string,
+    isVerified: boolean,
+  ) {
     const expiresAt = this.calculateExpiration(rememberMe);
     const refreshToken = nanoid(64);
 
-    await this.repository.create({ 
-      userId, 
-      refreshToken, 
-      ipAddress: new IpAddress(ipAddress).toString(), 
-      userAgent: new UserAgent(userAgent).toString(), 
-      expiresAt 
+    await this.repository.create({
+      userId,
+      refreshToken,
+      ipAddress: new IpAddress(ipAddress).toString(),
+      userAgent: new UserAgent(userAgent).toString(),
+      expiresAt,
     });
 
-    return { 
-      accessToken: this.jwtService.sign({ sub: userId, role, isVerified }), 
-      refreshToken, 
-      expiresAt 
+    return {
+      accessToken: this.jwtService.sign({ sub: userId, role, isVerified }),
+      refreshToken,
+      expiresAt,
     };
   }
 
   async refresh(oldToken: string, userAgent: string) {
     const session = await this.repository.findUniqueWithUser(oldToken);
-    SessionValidatorPolicy.validate(session, new UserAgent(userAgent).toString());
+    SessionValidatorPolicy.validate(
+      session,
+      new UserAgent(userAgent).toString(),
+    );
 
     const newRefreshToken = nanoid(64);
     const expiresAt = this.calculateExpiration(false);
 
-    await this.repository.update(session!.id, { refreshToken: newRefreshToken, expiresAt });
+    await this.repository.update(session!.id, {
+      refreshToken: newRefreshToken,
+      expiresAt,
+    });
 
-    return { 
-      accessToken: this.jwtService.sign({ sub: session!.userId, role: (session!.user as any).role, isVerified: (session!.user as any).isVerified }), 
-      refreshToken: newRefreshToken, 
-      expiresAt 
+    return {
+      accessToken: this.jwtService.sign({
+        sub: session!.userId,
+        role: (session!.user as any).role,
+        isVerified: (session!.user as any).isVerified,
+      }),
+      refreshToken: newRefreshToken,
+      expiresAt,
     };
   }
 
@@ -66,11 +83,11 @@ export class SessionService {
   async revokeSession(sessionId: string, userId: string) {
     return this.repository.delete(sessionId, userId);
   }
-async revokeAllOthers(userId: string, currentSessionId: string) {
-  return this.repository.deleteOthers(userId, currentSessionId);
-}
+  async revokeAllOthers(userId: string, currentSessionId: string) {
+    return this.repository.deleteOthers(userId, currentSessionId);
+  }
 
-async revokeAll(userId: string) {
-  return this.repository.deleteAllByUserId(userId);
-}
+  async revokeAll(userId: string) {
+    return this.repository.deleteAllByUserId(userId);
+  }
 }

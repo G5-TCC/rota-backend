@@ -13,9 +13,11 @@ export class SecurityMonitorService {
 
   async monitorLogin(userId: string, userAgent: string, email: string) {
     const fingerprint = this.generateFingerprint(userAgent);
-    
+
     const device = await this.prisma.knownDevice.findUnique({
-      where: { userId_deviceFingerprint: { userId, deviceFingerprint: fingerprint } }
+      where: {
+        userId_deviceFingerprint: { userId, deviceFingerprint: fingerprint },
+      },
     });
 
     if (!device) {
@@ -23,7 +25,7 @@ export class SecurityMonitorService {
     } else {
       await this.prisma.knownDevice.update({
         where: { id: device.id },
-        data: { lastUsed: new Date() }
+        data: { lastUsed: new Date() },
       });
     }
   }
@@ -33,19 +35,32 @@ export class SecurityMonitorService {
     return Buffer.from(userAgent).toString('base64').substring(0, 50);
   }
 
-  private async handleNewDevice(userId: string, fingerprint: string, email: string) {
+  private async handleNewDevice(
+    userId: string,
+    fingerprint: string,
+    email: string,
+  ) {
     this.logger.warn(`Novo dispositivo detectado para o usuário ${userId}`);
-    
+
     await this.prisma.knownDevice.create({
-      data: { userId, deviceFingerprint: fingerprint }
+      data: { userId, deviceFingerprint: fingerprint },
     });
 
-    await this.mailService.sendSecurityAlert(email, 'Novo dispositivo detectado');
+    await this.mailService.sendSecurityAlert(
+      email,
+      'Novo dispositivo detectado',
+    );
   }
 
-  async logAction(userId: string, action: string, details: any, ip: string, ua: string) {
+  async logAction(
+    userId: string,
+    action: string,
+    details: any,
+    ip: string,
+    ua: string,
+  ) {
     await this.prisma.auditLog.create({
-      data: { userId, action, details, ipAddress: ip, userAgent: ua }
+      data: { userId, action, details, ipAddress: ip, userAgent: ua },
     });
   }
 }

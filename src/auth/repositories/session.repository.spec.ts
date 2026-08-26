@@ -29,12 +29,12 @@ describe('SessionRepository', () => {
   });
 
   it('should create a session', async () => {
-    const data = { 
-      userId: 'u1', 
-      refreshToken: 'r1', 
-      ipAddress: '127.0.0.1', 
-      userAgent: 'ua', 
-      expiresAt: new Date() 
+    const data = {
+      userId: 'u1',
+      refreshToken: 'r1',
+      ipAddress: '127.0.0.1',
+      userAgent: 'ua',
+      expiresAt: new Date(),
     };
     await repository.create(data);
     expect(prisma.session.create).toHaveBeenCalledWith({ data });
@@ -63,7 +63,7 @@ describe('SessionRepository', () => {
     const token = 'r1';
     await repository.deleteManyByToken(token);
     expect(prisma.session.deleteMany).toHaveBeenCalledWith({
-      where: { refreshToken: token }
+      where: { refreshToken: token },
     });
   });
 });

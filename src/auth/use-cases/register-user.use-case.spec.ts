@@ -18,7 +18,9 @@ describe('RegisterUserUseCase', () => {
         },
         {
           provide: SecurityService,
-          useValue: { hashPassword: jest.fn().mockResolvedValue('hashed_password') },
+          useValue: {
+            hashPassword: jest.fn().mockResolvedValue('hashed_password'),
+          },
         },
       ],
     }).compile();
@@ -29,7 +31,11 @@ describe('RegisterUserUseCase', () => {
   });
 
   it('should successfully register a user', async () => {
-    const dto = { email: 'test@example.com', password: 'password123', alias: 'tester' };
+    const dto = {
+      email: 'test@example.com',
+      password: 'password123',
+      alias: 'tester',
+    };
     (userService.create as jest.Mock).mockResolvedValue({ id: '1', ...dto });
 
     const result = await useCase.execute(dto);

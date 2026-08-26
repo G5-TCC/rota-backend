@@ -16,7 +16,8 @@ export class AccountFacade {
     const user = await this.registerUserUseCase.execute(registrationData);
     return {
       user: this.userMapper.toResponse(user),
-      message: 'Account created successfully. Please check your email for verification.'
+      message:
+        'Account created successfully. Please check your email for verification.',
     };
   }
 
@@ -24,7 +25,7 @@ export class AccountFacade {
     const user = await this.verifyEmailUseCase.execute(token);
     return {
       user: this.userMapper.toResponse(user),
-      message: 'Email verified successfully'
+      message: 'Email verified successfully',
     };
   }
 }

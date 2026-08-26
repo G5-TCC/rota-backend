@@ -5,6 +5,11 @@ import { SessionService } from './session.service';
 import { LoginDto } from '../dtos/auth.dto';
 import { AuthenticatedUser } from '../interfaces/authenticated-user.interface';
 import { AuthMapper } from '../mappers/auth.mapper';
+import {
+  AuthLoginResponse,
+  AuthRefreshResponse,
+  AuthVerify2faResponse,
+} from '../dtos/auth-response.dto';
 
 @Injectable()
 export class AuthFacade {
@@ -15,14 +20,22 @@ export class AuthFacade {
     private readonly authMapper: AuthMapper,
   ) {}
 
-  async login(credentials: LoginDto, ipAddress: string, userAgent: string): Promise<any> {
-    const authResult = await this.loginUserUseCase.execute(credentials, ipAddress, userAgent);
+  async login(
+    credentials: LoginDto,
+    ipAddress: string,
+    userAgent: string,
+  ): Promise<any> {
+    const authResult = await this.loginUserUseCase.execute(
+      credentials,
+      ipAddress,
+      userAgent,
+    );
 
     if (authResult.requires2fa) {
-      return { 
-        requires2fa: true, 
+      return {
+        requires2fa: true,
         partialToken: authResult.partialToken!,
-        message: 'Two-factor authentication required'
+        message: 'Two-factor authentication required',
       };
     }
 
@@ -33,14 +46,20 @@ export class AuthFacade {
       userAgent,
       !!credentials.rememberMe,
       user.role,
-      user.isVerified
+      user.isVerified,
     );
 
-    const response = this.authMapper.toAuthResponse(user as AuthenticatedUser, session);
+    const response = this.authMapper.toAuthResponse(
+      user as AuthenticatedUser,
+      session,
+    );
     return { ...response, message: 'Login successful' };
   }
 
-  async refresh(token: string, userAgent: string) {
+  async refresh(
+    token: string,
+    userAgent: string,
+  ): Promise<AuthRefreshResponse> {
     if (!token) {
       throw new UnauthorizedException('Token ausente');
     }
@@ -52,16 +71,31 @@ export class AuthFacade {
     if (token) {
       await this.sessionService.revokeSession(token, '');
     }
-    return { 
-      clearCookie: true, 
-      message: 'Logged out successfully' 
+    return {
+      clearCookie: true,
+      message: 'Logged out successfully',
     };
   }
 
-  async verify2fa(partialToken: string, code: string, ipAddress: string, userAgent: string): Promise<any> {
-    const user = (await this.verifyTwoFactorUseCase.execute(partialToken, code)) as AuthenticatedUser;
-    const session = await this.sessionService.create(user.id, ipAddress, userAgent, false, user.role, user.isVerified);
-    
+  async verify2fa(
+    partialToken: string,
+    code: string,
+    ipAddress: string,
+    userAgent: string,
+  ): Promise<AuthVerify2faResponse> {
+    const user = (await this.verifyTwoFactorUseCase.execute(
+      partialToken,
+      code,
+    )) as AuthenticatedUser;
+    const session = await this.sessionService.create(
+      user.id,
+      ipAddress,
+      userAgent,
+      false,
+      user.role,
+      user.isVerified,
+    );
+
     const response = this.authMapper.toAuthResponse(user, session);
     return { ...response, message: '2FA verification successful' };
   }

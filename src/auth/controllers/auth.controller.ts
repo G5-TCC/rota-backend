@@ -1,9 +1,4 @@
-import {
-  Controller,
-  Post,
-  Body,
-  UseInterceptors,
-} from '@nestjs/common';
+import { Controller, Post, Body, UseInterceptors } from '@nestjs/common';
 import { AuthFacade } from '../services/auth.facade';
 import { AccountFacade } from '../services/account.facade';
 import { LoginDto, RegisterDto, TwoFactorVerifyDto } from '../dtos/auth.dto';
@@ -12,9 +7,9 @@ import { TransformInterceptor } from '../../common/interceptors/transform.interc
 import { RefreshToken } from '../decorators/refresh-token.decorator';
 import { IpAddress } from '../decorators/ip-address.decorator';
 import { UserAgent } from '../decorators/user-agent.decorator';
-import { 
-  ApiTags, 
-  ApiOperation, 
+import {
+  ApiTags,
+  ApiOperation,
   ApiBadRequestResponse,
   ApiUnauthorizedResponse,
   ApiTooManyRequestsResponse,
@@ -23,7 +18,10 @@ import {
   ApiResponse,
 } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
-import { AuthResponse, TwoFactorRequiredResponse } from '../dtos/auth-response.dto';
+import {
+  AuthResponse,
+  TwoFactorRequiredResponse,
+} from '../dtos/auth-response.dto';
 
 @ApiTags('Autenticação')
 @Controller('auth')
@@ -35,26 +33,35 @@ export class AuthController {
   ) {}
 
   @Post('register')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Registrar novo usuário',
-    description: 'Cria uma conta de usuário com alias único, e-mail e senha.'
+    description: 'Cria uma conta de usuário com alias único, e-mail e senha.',
   })
   @ApiCreatedResponse({ description: 'Usuário criado com sucesso.' })
-  @ApiBadRequestResponse({ description: 'Dados inválidos ou alias/e-mail já em uso.' })
+  @ApiBadRequestResponse({
+    description: 'Dados inválidos ou alias/e-mail já em uso.',
+  })
   async register(@Body() registrationData: RegisterDto) {
     return this.accountFacade.register(registrationData);
   }
 
   @Throttle({ default: { limit: 5, ttl: 60000 } })
   @Post('login')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Autenticar usuário',
-    description: 'Valida credenciais. Se o 2FA estiver ativo, retorna 202 com partialToken.'
+    description:
+      'Valida credenciais. Se o 2FA estiver ativo, retorna 202 com partialToken.',
   })
   @ApiOkResponse({ description: 'Login bem sucedido.', type: AuthResponse })
-  @ApiResponse({ status: 202, description: '2FA necessário.', type: TwoFactorRequiredResponse })
+  @ApiResponse({
+    status: 202,
+    description: '2FA necessário.',
+    type: TwoFactorRequiredResponse,
+  })
   @ApiUnauthorizedResponse({ description: 'E-mail ou senha incorretos.' })
-  @ApiTooManyRequestsResponse({ description: 'Muitas tentativas. Tente novamente em 1 minuto.' })
+  @ApiTooManyRequestsResponse({
+    description: 'Muitas tentativas. Tente novamente em 1 minuto.',
+  })
   async login(
     @Body() credentials: LoginDto,
     @IpAddress() ipAddress: string,
@@ -66,11 +73,10 @@ export class AuthController {
   @Post('refresh')
   @ApiOperation({ summary: 'Atualizar token de acesso' })
   @ApiOkResponse({ description: 'Token atualizado com sucesso.' })
-  @ApiUnauthorizedResponse({ description: 'Refresh Token inválido ou expirado.' })
-  async refresh(
-    @RefreshToken() token: string,
-    @UserAgent() userAgent: string,
-  ) {
+  @ApiUnauthorizedResponse({
+    description: 'Refresh Token inválido ou expirado.',
+  })
+  async refresh(@RefreshToken() token: string, @UserAgent() userAgent: string) {
     return this.authFacade.refresh(token, userAgent);
   }
 
@@ -83,13 +89,23 @@ export class AuthController {
 
   @Post('verify-2fa')
   @ApiOperation({ summary: 'Verificar código 2FA' })
-  @ApiOkResponse({ description: '2FA verificado. Sessão iniciada.', type: AuthResponse })
-  @ApiUnauthorizedResponse({ description: 'Código inválido ou token parcial expirado.' })
+  @ApiOkResponse({
+    description: '2FA verificado. Sessão iniciada.',
+    type: AuthResponse,
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Código inválido ou token parcial expirado.',
+  })
   async verify2fa(
     @Body() verifyDto: TwoFactorVerifyDto,
     @IpAddress() ipAddress: string,
     @UserAgent() userAgent: string,
   ) {
-    return this.authFacade.verify2fa(verifyDto.partialToken, verifyDto.code, ipAddress, userAgent);
+    return this.authFacade.verify2fa(
+      verifyDto.partialToken,
+      verifyDto.code,
+      ipAddress,
+      userAgent,
+    );
   }
 }

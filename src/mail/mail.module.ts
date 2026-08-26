@@ -20,12 +20,7 @@ import { bullConfigFactory } from './factories/bull-config.factory';
       name: 'mail',
     }),
   ],
-  providers: [
-    MailService,
-    MailOrchestrator,
-    MailProcessor,
-    TemplateService,
-  ],
+  providers: [MailService, MailOrchestrator, MailProcessor, TemplateService],
   exports: [MailService],
 })
 export class MailModule {}

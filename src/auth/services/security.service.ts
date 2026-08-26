@@ -12,7 +12,7 @@ export class SecurityService {
   async getSecurityStatus(userId: string) {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
-      select: { is2faEnabled: true, email: true, alias: true }
+      select: { is2faEnabled: true, email: true, alias: true },
     });
     if (!user) throw new Error('User not found');
     return {
@@ -37,11 +37,11 @@ export class SecurityService {
   safeCompare(a: string, b: string): boolean {
     const bufA = Buffer.from(a);
     const bufB = Buffer.from(b);
-    
+
     if (bufA.length !== bufB.length) {
       return false;
     }
-    
+
     return timingSafeEqual(bufA, bufB);
   }
 

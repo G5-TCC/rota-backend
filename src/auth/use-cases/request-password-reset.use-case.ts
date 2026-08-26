@@ -19,9 +19,9 @@ export class RequestPasswordResetUseCase {
 
     const token = nanoid(32);
     const expiresAt = new Date(Date.now() + 3600000); // 1 hour
-    
+
     await this.passwordResetRepository.create(user.id, token, expiresAt);
-    
+
     this.eventEmitter.emit(
       'password.reset.requested',
       new PasswordResetRequestedEvent(user.email, token, requestId),

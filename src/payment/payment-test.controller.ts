@@ -18,22 +18,28 @@ export class PaymentTestController {
       where: { externalId },
     });
 
-    if (!transaction) throw new BadRequestException('Transação não encontrada no seu banco');
+    if (!transaction)
+      throw new BadRequestException('Transação não encontrada no seu banco');
 
     const payload = {
       event: 'checkout.completed',
-      data: { id: externalId }
+      data: { id: externalId },
     };
 
     const rawBody = JSON.stringify(payload);
     const secret = this.configService.get<string>('ABACATEPAY_WEBHOOK_SECRET');
-    
+
     if (!secret) {
-      throw new BadRequestException('ABACATEPAY_WEBHOOK_SECRET não configurado no ambiente');
+      throw new BadRequestException(
+        'ABACATEPAY_WEBHOOK_SECRET não configurado no ambiente',
+      );
     }
 
     // Gerar assinatura válida para o seu próprio serviço aceitar
-    const signature = crypto.createHmac('sha256', secret).update(rawBody).digest('hex');
+    const signature = crypto
+      .createHmac('sha256', secret)
+      .update(rawBody)
+      .digest('hex');
 
     return this.paymentService.handleWebhook(signature, rawBody);
   }

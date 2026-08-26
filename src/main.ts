@@ -17,40 +17,49 @@ async function bootstrap() {
     await import('./instrument.js');
   }
 
-  const app = await NestFactory.create(AppModule, { rawBody: true, bufferLogs: true });
-  
+  const app = await NestFactory.create(AppModule, {
+    rawBody: true,
+    bufferLogs: true,
+  });
+
   app.useLogger(app.get(Logger));
 
   // Configuração do Helmet compatível com Swagger UI
-  app.use(helmet({
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: [`'self'`],
-        styleSrc: [`'self'`, `'unsafe-inline'`],
-        imgSrc: [`'self'`, 'data:', 'validator.swagger.io'],
-        scriptSrc: [`'self'`, `https: 'unsafe-inline'`],
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: [`'self'`],
+          styleSrc: [`'self'`, `'unsafe-inline'`],
+          imgSrc: [`'self'`, 'data:', 'validator.swagger.io'],
+          scriptSrc: [`'self'`, `https: 'unsafe-inline'`],
+        },
       },
-    },
-  }));
+    }),
+  );
 
   app.use(cookieParser());
   app.enableCors({ credentials: true, origin: process.env.FRONTEND_URL });
-  
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }));
-  
+
+  app.useGlobalPipes(
+    new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
+  );
+
   // Encerramento gracioso (Graceful Shutdown)
   app.enableShutdownHooks();
 
   const config = new DocumentBuilder()
     .setTitle('Plataforma Backend API')
-    .setDescription(`
+    .setDescription(
+      `
       API de Autenticação e Gerenciamento de Segurança.
       
       ### Regras de Negócio:
       * **Autenticação**: Suporta JWT via Header (Bearer) e Refresh Token via HttpOnly Cookie.
       * **Segurança**: Detecção de novos dispositivos e 2FA obrigatório para logins suspeitos.
       * **Sessões**: Controle total sobre sessões ativas com possibilidade de revogação remota.
-    `)
+    `,
+    )
     .setVersion('1.0')
     .addBearerAuth({
       type: 'http',
@@ -65,7 +74,7 @@ async function bootstrap() {
       description: 'Refresh Token enviado automaticamente via cookie.',
     })
     .build();
-  
+
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document, {
     swaggerOptions: {

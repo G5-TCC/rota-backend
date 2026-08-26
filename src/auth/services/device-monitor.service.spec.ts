@@ -32,7 +32,9 @@ describe('DeviceMonitorService', () => {
   });
 
   it('should return false if device is known', async () => {
-    userRepository.findKnownDevice.mockResolvedValue({ id: 'device-id' } as any);
+    userRepository.findKnownDevice.mockResolvedValue({
+      id: 'device-id',
+    } as any);
     const result = await service.isNewDevice('user-id', 'agent-string');
     expect(result).toBe(false);
   });

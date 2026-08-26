@@ -25,7 +25,10 @@ describe('LoginUserUseCase', () => {
         },
         {
           provide: TwoFactorService,
-          useValue: { isNewDevice: jest.fn().mockResolvedValue(false), logDevice: jest.fn() },
+          useValue: {
+            isNewDevice: jest.fn().mockResolvedValue(false),
+            logDevice: jest.fn(),
+          },
         },
         {
           provide: JwtService,
@@ -45,7 +48,11 @@ describe('LoginUserUseCase', () => {
     const user = { id: '1', password: 'hash', is2faEnabled: false };
     (userService.findByEmail as jest.Mock).mockResolvedValue(user);
 
-    const result = await useCase.execute(credentials, '127.0.0.1', 'Mozilla/5.0');
+    const result = await useCase.execute(
+      credentials,
+      '127.0.0.1',
+      'Mozilla/5.0',
+    );
 
     expect(result.requires2fa).toBe(false);
     expect(result.user).toEqual(user);

@@ -2,7 +2,10 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { Session, User } from '@prisma/client';
 
 export class SessionValidatorPolicy {
-  static validate(session: (Session & { user: User }) | null, currentUserAgent: string): void {
+  static validate(
+    session: (Session & { user: User }) | null,
+    currentUserAgent: string,
+  ): void {
     if (!session) {
       throw new UnauthorizedException('Sessão inválida ou token já utilizado');
     }

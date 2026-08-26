@@ -25,20 +25,29 @@ export class MailProcessor extends WorkerHost {
         scope.setTag('requestId', requestId);
       }
 
-      this.logger.log({ requestId }, `Processing job ${job.id} for ${job.data.to}...`);
+      this.logger.log(
+        { requestId },
+        `Processing job ${job.id} for ${job.data.to}...`,
+      );
 
       try {
-        const html = await this.templateService.render(job.data.template, job.data.context);
-        
+        const html = await this.templateService.render(
+          job.data.template,
+          job.data.context,
+        );
+
         await this.mailOrchestrator.send({
           ...job.data,
           html,
         });
-        
+
         this.logger.log({ requestId }, `Successfully processed job ${job.id}`);
       } catch (error) {
-        this.logger.error({ requestId }, `Failed to process job ${job.id}: ${error.message}`);
-        throw error; 
+        this.logger.error(
+          { requestId },
+          `Failed to process job ${job.id}: ${error.message}`,
+        );
+        throw error;
       }
     });
   }

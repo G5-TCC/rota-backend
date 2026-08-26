@@ -47,7 +47,13 @@ describe('SessionService', () => {
       const ipAddress = '127.0.0.1';
       const userAgent = 'Mozilla/5.0';
 
-      const result = await service.create(userId, ipAddress, userAgent, false, 'USER');
+      const result = await service.create(
+        userId,
+        ipAddress,
+        userAgent,
+        false,
+        'USER',
+      );
 
       expect(repository.create).toHaveBeenCalled();
       expect(jwtService.sign).toHaveBeenCalled();
@@ -56,8 +62,9 @@ describe('SessionService', () => {
     });
 
     it('should throw BadRequestException for invalid IP', async () => {
-      await expect(service.create('u1', 'invalid-ip', 'ua', false, 'USER'))
-        .rejects.toThrow(BadRequestException);
+      await expect(
+        service.create('u1', 'invalid-ip', 'ua', false, 'USER'),
+      ).rejects.toThrow(BadRequestException);
     });
   });
 
@@ -65,12 +72,12 @@ describe('SessionService', () => {
     it('should refresh a session successfully', async () => {
       const oldToken = 'old-refresh-token';
       const userAgent = 'Mozilla/5.0';
-      const mockSession = { 
-        id: 's1', 
-        userId: 'u1', 
-        userAgent, 
+      const mockSession = {
+        id: 's1',
+        userId: 'u1',
+        userAgent,
         expiresAt: new Date(Date.now() + 100000),
-        user: { role: 'USER' }
+        user: { role: 'USER' },
       } as any;
 
       repository.findUniqueWithUser.mockResolvedValue(mockSession);
@@ -84,17 +91,19 @@ describe('SessionService', () => {
     });
 
     it('should throw UnauthorizedException if device changes', async () => {
-      const mockSession = { 
-        id: 's1', 
-        userId: 'u1', 
-        userAgent: 'Other Browser', 
+      const mockSession = {
+        id: 's1',
+        userId: 'u1',
+        userAgent: 'Other Browser',
         expiresAt: new Date(Date.now() + 100000),
-        user: { role: 'USER' }
+        user: { role: 'USER' },
       } as any;
 
       repository.findUniqueWithUser.mockResolvedValue(mockSession);
 
-      await expect(service.refresh('token', 'My Browser')).rejects.toThrow(UnauthorizedException);
+      await expect(service.refresh('token', 'My Browser')).rejects.toThrow(
+        UnauthorizedException,
+      );
     });
   });
 });

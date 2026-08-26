@@ -11,10 +11,22 @@ export interface CheckoutResult {
 }
 
 export interface IPaymentGateway {
-  createProduct(externalId: string, name: string, price: number): Promise<PaymentProduct>;
+  createProduct(
+    externalId: string,
+    name: string,
+    price: number,
+  ): Promise<PaymentProduct>;
   findProductByExternalId(externalId: string): Promise<PaymentProduct | null>;
-  createSubscription(items: { id: string; quantity: number }[], customer: any, urls: any): Promise<CheckoutResult>;
-  createCheckout(items: { id: string; quantity: number }[], customer: any, urls: any): Promise<CheckoutResult>;
+  createSubscription(
+    items: { id: string; quantity: number }[],
+    customer: any,
+    urls: any,
+  ): Promise<CheckoutResult>;
+  createCheckout(
+    items: { id: string; quantity: number }[],
+    customer: any,
+    urls: any,
+  ): Promise<CheckoutResult>;
   verifyWebhook(signature: string, rawBody: string): boolean;
   simulatePayment(externalId: string): Promise<void>;
 }

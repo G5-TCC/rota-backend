@@ -28,7 +28,8 @@ export class HealthController {
   check() {
     return this.health.check([
       // Banco de Dados
-      () => this.prismaHealth.pingCheck('database', this.prisma, { timeout: 5000 }),
+      () =>
+        this.prismaHealth.pingCheck('database', this.prisma, { timeout: 5000 }),
       // Memória Heap (Limite de 150MB como exemplo)
       () => this.memory.checkHeap('memory_heap', 150 * 1024 * 1024),
     ]);

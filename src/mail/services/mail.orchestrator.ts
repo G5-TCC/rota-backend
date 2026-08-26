@@ -28,12 +28,16 @@ export class MailOrchestrator {
         to: options.to,
         subject: options.subject,
         text: `Hello ${options.context.alias}!`,
-        html: options.html || `<strong>Bem-vindo, ${options.context.alias}!</strong>`,
+        html:
+          options.html ||
+          `<strong>Bem-vindo, ${options.context.alias}!</strong>`,
       });
 
       this.logger.log(`Email sent successfully to ${options.to} using SMTP`);
     } catch (error) {
-      this.logger.error(`Failed to send email to ${options.to} using SMTP: ${error.message}`);
+      this.logger.error(
+        `Failed to send email to ${options.to} using SMTP: ${error.message}`,
+      );
       throw new Error('Email sending failed.');
     }
   }

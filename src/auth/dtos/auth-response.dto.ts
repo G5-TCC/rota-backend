@@ -19,6 +19,18 @@ export class AuthResponse {
   user: AuthUserResponse;
 }
 
+export interface AuthLoginResponse extends AuthResponse {
+  message: string;
+}
+
+export interface AuthRefreshResponse extends AuthResponse {
+  message: string;
+}
+
+export interface AuthVerify2faResponse extends AuthResponse {
+  message: string;
+}
+
 export class TwoFactorRequiredResponse {
   @ApiProperty({ example: true })
   requires2fa: true;

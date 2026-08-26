@@ -7,7 +7,10 @@ export class DeviceMonitorService {
 
   async isNewDevice(userId: string, userAgent: string): Promise<boolean> {
     const fingerprint = this.generateFingerprint(userAgent);
-    const device = await this.userRepository.findKnownDevice(userId, fingerprint);
+    const device = await this.userRepository.findKnownDevice(
+      userId,
+      fingerprint,
+    );
     return !device;
   }
 

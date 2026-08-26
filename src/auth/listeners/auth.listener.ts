@@ -13,31 +13,58 @@ export class AuthListener {
 
   @OnEvent('user.created')
   async handleUserCreatedEvent(event: UserCreatedEvent) {
-    this.logger.log(`Handling user.created event for ${event.email} [ID: ${event.requestId || 'N/A'}]`);
+    this.logger.log(
+      `Handling user.created event for ${event.email} [ID: ${event.requestId || 'N/A'}]`,
+    );
     try {
-      await this.mailService.sendVerificationEmail(event.email, event.verificationToken, event.requestId);
+      await this.mailService.sendVerificationEmail(
+        event.email,
+        event.verificationToken,
+        event.requestId,
+      );
     } catch (error) {
-      this.logger.error(`Error sending verification email to ${event.email}:`, error);
+      this.logger.error(
+        `Error sending verification email to ${event.email}:`,
+        error,
+      );
     }
   }
 
   @OnEvent('password.reset.requested')
   async handlePasswordResetRequestedEvent(event: PasswordResetRequestedEvent) {
-    this.logger.log(`Handling password.reset.requested event for ${event.email} [ID: ${event.requestId || 'N/A'}]`);
+    this.logger.log(
+      `Handling password.reset.requested event for ${event.email} [ID: ${event.requestId || 'N/A'}]`,
+    );
     try {
-      await this.mailService.sendPasswordResetEmail(event.email, event.token, event.requestId);
+      await this.mailService.sendPasswordResetEmail(
+        event.email,
+        event.token,
+        event.requestId,
+      );
     } catch (error) {
-      this.logger.error(`Error sending password reset email to ${event.email}:`, error);
+      this.logger.error(
+        `Error sending password reset email to ${event.email}:`,
+        error,
+      );
     }
   }
 
   @OnEvent('two.factor.code.generated')
   async handleTwoFactorCodeGeneratedEvent(event: TwoFactorCodeGeneratedEvent) {
-    this.logger.log(`Handling two.factor.code.generated event for ${event.email} [ID: ${event.requestId || 'N/A'}]`);
+    this.logger.log(
+      `Handling two.factor.code.generated event for ${event.email} [ID: ${event.requestId || 'N/A'}]`,
+    );
     try {
-      await this.mailService.send2faCode(event.email, event.code, event.requestId);
+      await this.mailService.send2faCode(
+        event.email,
+        event.code,
+        event.requestId,
+      );
     } catch (error) {
-      this.logger.error(`Error sending 2FA code email to ${event.email}:`, error);
+      this.logger.error(
+        `Error sending 2FA code email to ${event.email}:`,
+        error,
+      );
     }
   }
 }

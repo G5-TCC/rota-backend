@@ -1,33 +1,44 @@
-import { IsEmail, IsString, MinLength, MaxLength, IsBoolean, IsOptional, Matches } from 'class-validator';
+import {
+  IsEmail,
+  IsString,
+  MinLength,
+  MaxLength,
+  IsBoolean,
+  IsOptional,
+  Matches,
+} from 'class-validator';
 import { Transform } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class RegisterDto {
-  @ApiProperty({ 
-    example: 'johndoe', 
-    minLength: 3, 
+  @ApiProperty({
+    example: 'johndoe',
+    minLength: 3,
     maxLength: 30,
-    description: 'Nome de usuário único. Deve conter apenas letras, números e hifens.' 
+    description:
+      'Nome de usuário único. Deve conter apenas letras, números e hifens.',
   })
   @IsString()
   @MinLength(3)
   @MaxLength(30)
-  @Matches(/^[a-zA-Z0-9-]+$/, { message: 'Alias can only contain letters, numbers and hyphens' })
+  @Matches(/^[a-zA-Z0-9-]+$/, {
+    message: 'Alias can only contain letters, numbers and hyphens',
+  })
   alias: string;
 
-  @ApiProperty({ 
+  @ApiProperty({
     example: 'user@example.com',
-    description: 'E-mail principal do usuário para login e notificações.'
+    description: 'E-mail principal do usuário para login e notificações.',
   })
   @IsEmail()
-  @Transform(({ value }) => value?.toLowerCase().trim())
+  @Transform(({ value }: { value: string }) => value?.toLowerCase().trim())
   email: string;
 
-  @ApiProperty({ 
-    example: 'P@ssw0rd123', 
-    minLength: 6, 
+  @ApiProperty({
+    example: 'P@ssw0rd123',
+    minLength: 6,
     maxLength: 72,
-    description: 'Senha segura. Mínimo de 6 caracteres.' 
+    description: 'Senha segura. Mínimo de 6 caracteres.',
   })
   @IsString()
   @MinLength(6)
@@ -38,7 +49,7 @@ export class RegisterDto {
 export class LoginDto {
   @ApiProperty({ example: 'user@example.com' })
   @IsEmail()
-  @Transform(({ value }) => value?.toLowerCase().trim())
+  @Transform(({ value }: { value: string }) => value?.toLowerCase().trim())
   email: string;
 
   @ApiProperty({ example: 'password123' })
@@ -46,10 +57,10 @@ export class LoginDto {
   @MaxLength(72)
   password: string;
 
-  @ApiProperty({ 
-    example: false, 
+  @ApiProperty({
+    example: false,
     required: false,
-    description: 'Se verdadeiro, a sessão será estendida.' 
+    description: 'Se verdadeiro, a sessão será estendida.',
   })
   @IsBoolean()
   @IsOptional()
@@ -68,21 +79,28 @@ export class ResetPasswordDto {
 }
 
 export class TwoFactorVerifyDto {
-  @ApiProperty({ example: '123456', description: 'Código de 6 dígitos gerado pelo app de 2FA.' })
+  @ApiProperty({
+    example: '123456',
+    description: 'Código de 6 dígitos gerado pelo app de 2FA.',
+  })
   @IsString()
   @MinLength(6)
   @MaxLength(6)
   code: string;
 
-  @ApiProperty({ description: 'Token parcial obtido após login bem-sucedido com 2FA ativado.' })
+  @ApiProperty({
+    description:
+      'Token parcial obtido após login bem-sucedido com 2FA ativado.',
+  })
   @IsString()
   partialToken: string;
 }
 
 export class VerifyEmailDto {
-  @ApiProperty({ 
-    example: 'a1b2c3d4e5f6g7h8i9j0', 
-    description: 'Token de verificação enviado para o e-mail do usuário após o registro.' 
+  @ApiProperty({
+    example: 'a1b2c3d4e5f6g7h8i9j0',
+    description:
+      'Token de verificação enviado para o e-mail do usuário após o registro.',
   })
   @IsString()
   token: string;

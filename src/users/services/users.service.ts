@@ -1,4 +1,8 @@
-import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common';
 import { RegisterDto } from '../../auth/dtos/auth.dto';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Email } from '../../common/domain/value-objects/email.vo';
@@ -37,7 +41,10 @@ export class UserService {
     const user = await this.repository.findByToken(token);
     if (!user) throw new NotFoundException('Invalid token');
 
-    return this.repository.update(user.id, { isVerified: true, verificationToken: null });
+    return this.repository.update(user.id, {
+      isVerified: true,
+      verificationToken: null,
+    });
   }
 
   // ... rest of the methods (findByEmail, updatePassword, etc)
@@ -57,7 +64,8 @@ export class UserService {
   private async validateUniqueness(email: string, alias: string) {
     const user = await this.repository.findFirstByEmailOrAlias(email, alias);
     if (!user) return;
-    if (user.email === email) throw new ConflictException('Email already in use');
+    if (user.email === email)
+      throw new ConflictException('Email already in use');
     throw new ConflictException('Alias already in use');
   }
 }

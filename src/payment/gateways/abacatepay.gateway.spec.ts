@@ -28,7 +28,9 @@ describe('AbacatePayGateway', () => {
   });
 
   it('should create a product', async () => {
-    httpService.request.mockReturnValue(of({ data: { data: { id: 'prod-123' } } }));
+    httpService.request.mockReturnValue(
+      of({ data: { data: { id: 'prod-123' } } }),
+    );
     const product = await gateway.createProduct('ext-1', 'Product Name', 100);
     expect(product.id).toBe('prod-123');
   });
@@ -36,11 +38,13 @@ describe('AbacatePayGateway', () => {
   it('should return product if it already exists', async () => {
     // 1. Simular erro 'already exists' no primeiro request
     httpService.request.mockImplementationOnce(() => {
-        throw { response: { data: { error: 'already exists' } } };
+      throw { response: { data: { error: 'already exists' } } };
     });
     // 2. Simular sucesso no segundo request (findProductByExternalId)
-    httpService.request.mockReturnValueOnce(of({ data: { data: [{ externalId: 'ext-1', id: 'prod-123' }] } }));
-    
+    httpService.request.mockReturnValueOnce(
+      of({ data: { data: [{ externalId: 'ext-1', id: 'prod-123' }] } }),
+    );
+
     const product = await gateway.createProduct('ext-1', 'Name', 100);
     expect(product.id).toBe('prod-123');
   });

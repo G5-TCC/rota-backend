@@ -10,6 +10,7 @@ import { HttpAdapterHost } from '@nestjs/core';
 import { Prisma } from '@prisma/client';
 import * as Sentry from '@sentry/nestjs';
 import { DomainError } from '../domain/errors/domain.error';
+import { Request } from 'express';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
@@ -20,7 +21,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost): void {
     const { httpAdapter } = this.httpAdapterHost;
     const ctx = host.switchToHttp();
-    const request = ctx.getRequest();
+    const request = ctx.getRequest<Request>();
 
     let httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
     let message = 'Internal server error';
@@ -35,10 +36,14 @@ export class AllExceptionsFilter implements ExceptionFilter {
     // Tratar exceções conhecidas do NestJS
     else if (exception instanceof HttpException) {
       httpStatus = exception.getStatus();
-      const responseBody = exception.getResponse() as any;
+      const response = exception.getResponse();
+      const responseBody =
+        typeof response === 'object' && response !== null
+          ? (response as Record<string, any>)
+          : { message: response };
       message = responseBody.message || exception.message;
       errorCode = responseBody.error || 'HTTP_ERROR';
-    } 
+    }
     // Tratar erros específicos do Prisma (Database)
     else if (exception instanceof Prisma.PrismaClientKnownRequestError) {
       switch (exception.code) {
@@ -60,12 +65,14 @@ export class AllExceptionsFilter implements ExceptionFilter {
     }
 
     // Logar e enviar para o Sentry apenas se for um erro interno (500)
-    if (httpStatus >= 500) {
+    if (httpStatus >= (HttpStatus.INTERNAL_SERVER_ERROR as number)) {
       Sentry.captureException(exception);
-      
+
       this.logger.error(
         `Path: ${request.url} | Method: ${request.method} | Error: ${
-          exception instanceof Error ? exception.stack : JSON.stringify(exception)
+          exception instanceof Error
+            ? exception.stack
+            : JSON.stringify(exception)
         }`,
       );
     }
@@ -76,7 +83,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       path: httpAdapter.getRequestUrl(request),
       message,
       errorCode,
-      requestId: request.headers['x-request-id'],
+      requestId: request.headers['x-request-id'] as string | undefined,
     };
 
     httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);

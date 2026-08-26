@@ -19,7 +19,12 @@ export class UserRepository {
     });
   }
 
-  async create(data: { email: string; alias: string; password: string; verificationToken: string }) {
+  async create(data: {
+    email: string;
+    alias: string;
+    password: string;
+    verificationToken: string;
+  }) {
     return this.prisma.user.create({
       data,
       select: { id: true, email: true, alias: true, role: true },
@@ -30,14 +35,17 @@ export class UserRepository {
     return this.prisma.user.findUnique({ where: { verificationToken } });
   }
 
-  async update(id: string, data: { 
-    password?: string; 
-    isVerified?: boolean; 
-    verificationToken?: string | null;
-    is2faEnabled?: boolean;
-    twoFactorCode?: string | null;
-    twoFactorExpiresAt?: Date | null;
-  }) {
+  async update(
+    id: string,
+    data: {
+      password?: string;
+      isVerified?: boolean;
+      verificationToken?: string | null;
+      is2faEnabled?: boolean;
+      twoFactorCode?: string | null;
+      twoFactorExpiresAt?: Date | null;
+    },
+  ) {
     return this.prisma.user.update({
       where: { id },
       data,
@@ -60,13 +68,13 @@ export class UserRepository {
 
   async findKnownDevice(userId: string, deviceFingerprint: string) {
     return this.prisma.knownDevice.findUnique({
-      where: { userId_deviceFingerprint: { userId, deviceFingerprint } }
+      where: { userId_deviceFingerprint: { userId, deviceFingerprint } },
     });
   }
 
   async createKnownDevice(userId: string, deviceFingerprint: string) {
     return this.prisma.knownDevice.create({
-      data: { userId, deviceFingerprint }
+      data: { userId, deviceFingerprint },
     });
   }
 }

@@ -16,31 +16,48 @@ export class LoginUserUseCase {
     private readonly jwtService: JwtService,
   ) {}
 
-  async execute(credentials: LoginDto, ipAddress: string, userAgent: string, requestId?: string) {
+  async execute(
+    credentials: LoginDto,
+    ipAddress: string,
+    userAgent: string,
+    requestId?: string,
+  ) {
     const email = new Email(credentials.email);
     const password = new Password(credentials.password);
 
     const user = (await this.userService.findByEmail(email.toString())) as any;
 
-    if (!user || !(await this.securityService.comparePassword(password.toString(), user.password))) {
+    if (
+      !user ||
+      !(await this.securityService.comparePassword(
+        password.toString(),
+        user.password,
+      ))
+    ) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const isNewDevice = await this.twoFactorService.isNewDevice(user.id, userAgent);
-    
+    const isNewDevice = await this.twoFactorService.isNewDevice(
+      user.id,
+      userAgent,
+    );
+
     if (user.is2faEnabled) {
       // Nota: o generateAndSendCode agora emite o evento que o AuthListener captura
       await this.twoFactorService.generateAndSendCode(user);
-      return { 
-        requires2fa: true, 
-        partialToken: this.jwtService.sign({ sub: user.id }, { expiresIn: '5m' }) 
+      return {
+        requires2fa: true,
+        partialToken: this.jwtService.sign(
+          { sub: user.id },
+          { expiresIn: '5m' },
+        ),
       };
     }
 
     if (isNewDevice) {
       await this.twoFactorService.logDevice(user.id, userAgent);
     }
-    
+
     return { requires2fa: false, user };
   }
 }
