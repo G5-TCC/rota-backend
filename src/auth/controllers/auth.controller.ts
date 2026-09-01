@@ -1,7 +1,7 @@
 import { Controller, Post, Body, UseInterceptors } from '@nestjs/common';
 import { AuthFacade } from '../services/auth.facade';
 import { AccountFacade } from '../services/account.facade';
-import { LoginDto, RegisterDto, TwoFactorVerifyDto } from '../dtos/auth.dto';
+import { LoginDto, RegisterDto, TwoFactorVerifyDto } from '@ROTA-TCC/types';
 import { SetCookieInterceptor } from '../interceptors/set-cookie.interceptor';
 import { TransformInterceptor } from '../../common/interceptors/transform.interceptor';
 import { RefreshToken } from '../decorators/refresh-token.decorator';
@@ -21,7 +21,7 @@ import { Throttle } from '@nestjs/throttler';
 import {
   AuthResponse,
   TwoFactorRequiredResponse,
-} from '../dtos/auth-response.dto';
+} from '@ROTA-TCC/types';
 
 @ApiTags('Autenticação')
 @Controller('auth')

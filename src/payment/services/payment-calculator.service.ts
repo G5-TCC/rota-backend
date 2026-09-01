@@ -1,6 +1,6 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { Plan, TransactionType } from '@prisma/client';
-import { CreateCheckoutDto } from '../dtos/create-checkout.dto';
+import { CreateCheckoutDto } from '@ROTA-TCC/types';
 
 const PLAN_PRICES = {
   [Plan.GRATIS]: 0,

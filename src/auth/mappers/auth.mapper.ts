@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { AuthResponse, AuthUserResponse } from '../dtos/auth-response.dto';
-import { AuthenticatedUser } from '../interfaces/authenticated-user.interface';
+import { AuthResponse, AuthUserResponse } from '@ROTA-TCC/types';
+import { AuthenticatedUser } from '@ROTA-TCC/types';
 import { UserMapper } from '../../users/mappers/user.mapper';
 
 @Injectable()

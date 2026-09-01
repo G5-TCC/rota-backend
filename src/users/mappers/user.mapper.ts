@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { AuthUserResponse } from '../../auth/dtos/auth-response.dto';
+import { AuthUserResponse } from '@ROTA-TCC/types';
 
 @Injectable()
 export class UserMapper {

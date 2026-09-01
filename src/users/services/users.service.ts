@@ -3,7 +3,7 @@ import {
   ConflictException,
   NotFoundException,
 } from '@nestjs/common';
-import { RegisterDto } from '../../auth/dtos/auth.dto';
+import { RegisterDto } from '@ROTA-TCC/types';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Email } from '../../common/domain/value-objects/email.vo';
 import { UserRepository } from '../repositories/user.repository';

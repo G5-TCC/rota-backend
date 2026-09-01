@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { UserService } from '../../users/services/users.service';
 import { SecurityService } from '../services/security.service';
-import { RegisterDto } from '../dtos/auth.dto';
+import { RegisterDto } from '@ROTA-TCC/types';
 import { Email } from '../../common/domain/value-objects/email.vo';
 import { Password } from '../../common/domain/value-objects/password.vo';
 

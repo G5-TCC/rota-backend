@@ -2,14 +2,14 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { LoginUserUseCase } from '../use-cases/login-user.use-case';
 import { VerifyTwoFactorUseCase } from '../use-cases/verify-2fa.use-case';
 import { SessionService } from './session.service';
-import { LoginDto } from '../dtos/auth.dto';
-import { AuthenticatedUser } from '../interfaces/authenticated-user.interface';
+import { LoginDto } from '@ROTA-TCC/types';
+import { AuthenticatedUser } from '@ROTA-TCC/types';
 import { AuthMapper } from '../mappers/auth.mapper';
 import {
   AuthLoginResponse,
   AuthRefreshResponse,
   AuthVerify2faResponse,
-} from '../dtos/auth-response.dto';
+} from '@ROTA-TCC/types';
 
 @Injectable()
 export class AuthFacade {

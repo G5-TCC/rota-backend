@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { SecurityFacade } from '../services/security.facade';
 import { AccountFacade } from '../services/account.facade';
-import { VerifyEmailDto } from '../dtos/auth.dto';
+import { VerifyEmailDto } from '@ROTA-TCC/types';
 import {
   ApiTags,
   ApiOperation,
@@ -19,7 +19,7 @@ import {
   ApiBadRequestResponse,
 } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
-import { SecurityStatusResponse } from '../dtos/auth-response.dto';
+import { SecurityStatusResponse } from '@ROTA-TCC/types';
 import { UserId } from '../decorators/user-id.decorator';
 import { TransformInterceptor } from '../../common/interceptors/transform.interceptor';
 

@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateCheckoutDto } from './dtos/create-checkout.dto';
+import { CreateCheckoutDto } from '@ROTA-TCC/types';
 import { Plan, TransactionType, TransactionStatus } from '@prisma/client';
 import { PAYMENT_GATEWAY } from './interfaces/payment-gateway.interface';
 import type { IPaymentGateway } from './interfaces/payment-gateway.interface';
